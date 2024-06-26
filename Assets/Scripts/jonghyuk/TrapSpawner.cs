@@ -13,12 +13,6 @@ public class TrapSpawner : MonoBehaviour
         StartCoroutine(TrapSpawnCoroutine(2f));
     }
 
-    void TrapSpawn()
-    {
-        GameObject trap = Instantiate(trapPrefab);
-        trap.transform.position = trapSpawnPoint.transform.position;
-    }
-
     IEnumerator TrapSpawnCoroutine(float delyTime)
     {
         GameObject trap = Instantiate(trapPrefab);
