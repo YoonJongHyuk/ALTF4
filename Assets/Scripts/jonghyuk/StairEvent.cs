@@ -64,7 +64,6 @@ public class StairEvent : MonoBehaviour
     IEnumerator Destroy()
     {
         yield return new WaitForSeconds(2f);
-        Debug.Log("³¡");
         Destroy(gameObject);
     }
 
