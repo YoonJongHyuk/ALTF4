@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/jonghyuk/StartScene.unity
+    guid: 9b1b5f851efe66640987f7e607a9c65c
+  - enabled: 1
+    path: Assets/Scenes/jonghyuk/MainScene.unity
+    guid: ab1c148c5003556488d4d6e3db619439
   m_configObjects: {}
