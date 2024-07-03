@@ -24,4 +24,5 @@ public class TrapFloor : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+
 }
