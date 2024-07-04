@@ -1,0 +1,40 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ItemUse : MonoBehaviour
+{
+    Item Item;
+
+    float propellerSpeed = 0.85f;
+
+    Rigidbody rb;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        //proropellerPos = new Vector3(0, 8f, 0);
+        rb = GetComponent<Rigidbody>();
+        Item = GameObject.FindObjectOfType<Item>();
+        Item.itemOK = false;
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            StartCoroutine(PropellerUse());
+        }
+    }
+
+    IEnumerator PropellerUse()
+    {
+        rb.AddForce(Vector3.up * propellerSpeed, ForceMode.Acceleration);
+        yield return null;
+        yield return new WaitForSeconds(1.0f);
+        Item.itemType = Item.ItemType.None;
+        Item.itemOK = false;
+    }
+}

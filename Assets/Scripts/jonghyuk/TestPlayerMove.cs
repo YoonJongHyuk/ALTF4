@@ -139,9 +139,13 @@ public class TestPlayerMove : MonoBehaviour
         GameObject newPlayer = Instantiate(PlayerPrefab, RespawnPoint.transform.position, RespawnPoint.transform.rotation);
         newPlayer.name = "Player" + dieCount;
         TestPlayerMove playerCode = newPlayer.GetComponent<TestPlayerMove>();
-
         GameObject text_dieText = GameObject.Find("Canvas").transform.Find("text_dieText").gameObject;
         text_dieText.SetActive(true);
+
+        ShootController shoot = gameObject.GetComponent<ShootController>();
+        shoot.SetCanShoot(false);
+        ShootController shootController = newPlayer.GetComponent<ShootController>();
+        shootController.SetCanShoot(false);
 
         Camera camera = FindObjectOfType<Camera>();
         playerCode.cameraTransform = camera.transform;
@@ -162,6 +166,10 @@ public class TestPlayerMove : MonoBehaviour
 
         // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
         CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+        
+        Transform newShootPosTransform = newPlayer.transform.Find("ShootPos");
+        shootController.shootPos = newShootPosTransform.gameObject;
+        shootController.SetCanShoot(true);
         if (freeLookCamera != null)
         {
             text_dieText.SetActive(false);
@@ -170,6 +178,8 @@ public class TestPlayerMove : MonoBehaviour
         }
         // 기존 플레이어에서 TestPlayerMove 스크립트를 제거하여 시체로 남깁니다.
         Destroy(GetComponent<TestPlayerMove>());
+        Destroy(GetComponent<ShootController>());
+        Destroy(GetComponent<ItemUse>());
 
         // 카메라 설정이 완료된 후 새 플레이어의 이동을 활성화
         playerCode.isDead = false;
