@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TestPlayerMove : MonoBehaviour
+public class ChickenMove : MonoBehaviour
 {
     public float maximumSpeed = 3f;
     public float jumpForce = 10f;
@@ -63,7 +63,7 @@ public class TestPlayerMove : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(isDead == false)
+        if (isDead == false)
         {
             MovePlayer();
         }
@@ -76,7 +76,7 @@ public class TestPlayerMove : MonoBehaviour
         invincibility = false;
         yield return new WaitForSeconds(1f);
         isRoll = true;
-        
+
     }
 
     void Roll()
@@ -216,7 +216,7 @@ public class TestPlayerMove : MonoBehaviour
 
         // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
         CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
-        
+
         Transform newShootPosTransform = newPlayer.transform.Find("ShootPos");
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);

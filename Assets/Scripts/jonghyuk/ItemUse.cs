@@ -10,6 +10,8 @@ public class ItemUse : MonoBehaviour
 
     Rigidbody rb;
 
+    bool useStart = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,11 +25,18 @@ public class ItemUse : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(1))
+        if (Input.GetKeyDown(KeyCode.LeftControl) && Item.itemOK)
+        {
+            useStart = true;
+        }
+
+        if (useStart)
         {
             StartCoroutine(PropellerUse());
         }
     }
+
+
 
     IEnumerator PropellerUse()
     {
@@ -35,6 +44,9 @@ public class ItemUse : MonoBehaviour
         yield return null;
         yield return new WaitForSeconds(1.0f);
         Item.itemType = Item.ItemType.None;
+        TestPlayerMove testPlayerMove = GetComponent<TestPlayerMove>();
+        testPlayerMove.isJumping = true;
         Item.itemOK = false;
+        useStart = false;
     }
 }
