@@ -15,8 +15,8 @@ public class ChickenMove : MonoBehaviour
     public bool isRoll;
     public bool isJumping;
     public bool isDead = false;
-    public Transform RespawnPoint;
-    public GameObject PlayerPrefab;
+    public Transform chickenRespawnPoint;
+    public GameObject chickenPrefab;
     public static int dieCount = 0;  // dieCount 변수를 static으로 선언하여 모든 인스턴스에서 공유
     private Text killCountText;  // killCountText 변수를 선언
 
@@ -177,13 +177,13 @@ public class ChickenMove : MonoBehaviour
     IEnumerator RespawnPlayer()
     {
         // 새 플레이어를 생성한다
-        GameObject newPlayer = Instantiate(PlayerPrefab, RespawnPoint.transform.position, RespawnPoint.transform.rotation);
+        GameObject newPlayer = Instantiate(chickenPrefab, chickenRespawnPoint.transform.position, chickenRespawnPoint.transform.rotation);
 
         // 기존 플레이어 오브젝트와 차별점을 위해, 리스폰된 오브젝트에 숫자를 기입한다.
         newPlayer.name = "Player" + (dieCount + 1);
 
 
-        TestPlayerMove playerCode = newPlayer.GetComponent<TestPlayerMove>();
+        ChickenMove playerCode = newPlayer.GetComponent<ChickenMove>();
 
         GameObject text_dieText = GameObject.Find("Canvas").transform.Find("text_dieText").gameObject;
         text_dieText.SetActive(true);
@@ -199,8 +199,8 @@ public class ChickenMove : MonoBehaviour
 
         Camera camera = FindObjectOfType<Camera>();
         playerCode.cameraTransform = camera.transform;
-        Transform newRespawnPoint = GameObject.Find("RespawnPoint").transform;
-        playerCode.RespawnPoint = newRespawnPoint;
+        Transform newRespawnPoint = GameObject.Find("ChickenRespawnPoint").transform;
+        playerCode.chickenRespawnPoint = newRespawnPoint;
 
         // 새 플레이어가 움직이지 않도록 설정
         playerCode.isDead = true;
@@ -226,8 +226,8 @@ public class ChickenMove : MonoBehaviour
             freeLookCamera.Follow = newPlayer.transform;
             freeLookCamera.LookAt = newPlayer.transform;
         }
-        // 기존 플레이어에서 TestPlayerMove 스크립트를 제거하여 시체로 남깁니다.
-        Destroy(GetComponent<TestPlayerMove>());
+        // 기존 플레이어에서 ChickenMove 스크립트를 제거하여 시체로 남깁니다.
+        Destroy(GetComponent<ChickenMove>());
         Destroy(GetComponent<ShootController>());
         Destroy(GetComponent<ItemUse>());
 

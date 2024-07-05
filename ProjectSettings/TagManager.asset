@@ -8,6 +8,7 @@ TagManager:
   - Trap
   - Shoot
   - RollingTrap
+  - ChangeZone
   layers:
   - Default
   - TransparentFX

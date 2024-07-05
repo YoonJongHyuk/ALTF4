@@ -4,15 +4,11 @@ using UnityEngine;
 
 public class CheckPlayer : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    TestPlayerMove anyPlayer;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
         
     }
+    
 }

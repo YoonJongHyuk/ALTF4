@@ -44,12 +44,12 @@ GameObject:
   - component: {fileID: 7317039238043605915}
   - component: {fileID: 8409063473165252769}
   - component: {fileID: 4921712826728929132}
-  - component: {fileID: 3462569011325754811}
+  - component: {fileID: 7725817184314822191}
   - component: {fileID: 3839171118737672761}
   - component: {fileID: 8123560548090843630}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Chicken
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -171,7 +171,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &3462569011325754811
+--- !u!114 &7725817184314822191
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -184,14 +184,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maximumSpeed: 7
-  jumpForce: 8.5
+  jumpForce: 5
   rotationSpeed: 720
   rollForce: 7.5
   isRoll: 0
   isJumping: 0
   isDead: 0
   RespawnPoint: {fileID: 0}
-  PlayerPrefab: {fileID: 0}
+  PlayerPrefab: {fileID: 4582295833322457900, guid: afd5f701111c52e4980e8f3124002804, type: 3}
+  RespawnPointChicken: {fileID: 0}
+  ChickenPrefab: {fileID: 5755520298349554730}
   cameraTransform: {fileID: 0}
 --- !u!114 &3839171118737672761
 MonoBehaviour:

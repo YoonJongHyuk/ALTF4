@@ -192,6 +192,8 @@ MonoBehaviour:
   isDead: 0
   RespawnPoint: {fileID: 0}
   PlayerPrefab: {fileID: 4582295833322457900}
+  RespawnPointChicken: {fileID: 0}
+  ChickenPrefab: {fileID: 5755520298349554730, guid: c85a269318575424fa97b33a1c5f7395, type: 3}
   cameraTransform: {fileID: 0}
 --- !u!114 &1977353154483689102
 MonoBehaviour:

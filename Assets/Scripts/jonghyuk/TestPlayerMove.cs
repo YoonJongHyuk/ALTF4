@@ -1,11 +1,21 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TestPlayerMove : MonoBehaviour
 {
+
+    public enum PlayerType
+    {
+        Player,
+        Chicken
+    }
+
+    PlayerType playerType;
+
     public float maximumSpeed = 3f;
     public float jumpForce = 10f;
     public float rotationSpeed = 20f;
@@ -15,8 +25,19 @@ public class TestPlayerMove : MonoBehaviour
     public bool isRoll;
     public bool isJumping;
     public bool isDead = false;
+
+
+
+
     public Transform RespawnPoint;
     public GameObject PlayerPrefab;
+
+
+    public Transform RespawnPointChicken;
+    public GameObject ChickenPrefab;
+
+
+
     public static int dieCount = 0;  // dieCount 변수를 static으로 선언하여 모든 인스턴스에서 공유
     private Text killCountText;  // killCountText 변수를 선언
 
@@ -27,6 +48,7 @@ public class TestPlayerMove : MonoBehaviour
 
     private void Start()
     {
+        playerType = PlayerType.Chicken;
         item = GameObject.FindObjectOfType<Item>();
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -126,7 +148,18 @@ public class TestPlayerMove : MonoBehaviour
             {
                 // 사망하고, 리스폰한다
                 Die();
-                StartCoroutine(RespawnPlayer());
+                switch(playerType)
+                {
+                    case PlayerType.Player:
+                        StopAllCoroutines();
+                        StartCoroutine(RespawnPlayer());
+                        break;
+                    case PlayerType.Chicken:
+                        StopAllCoroutines();
+                        StartCoroutine(RespawnChicken());
+                        break;
+                }
+                
             }
         }
     }
@@ -140,8 +173,36 @@ public class TestPlayerMove : MonoBehaviour
             {
                 // 사망하고, 리스폰한다
                 Die();
-                StartCoroutine(RespawnPlayer());
+                switch(playerType)
+                {
+                    case PlayerType.Player:
+                        StopAllCoroutines();
+                        StartCoroutine(RespawnPlayer());
+                        break;
+                    case PlayerType.Chicken:
+                        StopAllCoroutines();
+                        StartCoroutine(RespawnChicken());
+                        break;
+                }
             }
+        }
+        if (other.gameObject.tag == "ChangeZone")
+        {
+            print("테스트");
+            GameObject player = GameObject.Find("FourStage").transform.Find("Player").gameObject;
+            GameObject respawnPoint = GameObject.Find("FourStage").transform.Find("RespawnPoint").gameObject;
+            player.SetActive(true);
+            respawnPoint.SetActive(true);
+            PrioritySetting setting = GameObject.FindObjectOfType<PrioritySetting>();
+            setting.buttonFreeLook1();
+            GameObject freelook1 = GameObject.Find("CameraParent").transform.Find("FreeLook Camera1").gameObject;
+            GameObject freelook2 = GameObject.Find("CameraParent").transform.Find("FreeLook Camera2").gameObject;
+            freelook1.SetActive(true);
+            print(freelook1);
+            freelook2.SetActive(false);
+            playerType = PlayerType.Player;
+            gameObject.SetActive(false);
+            RespawnPointChicken.gameObject.SetActive(false);
         }
     }
 
@@ -217,6 +278,69 @@ public class TestPlayerMove : MonoBehaviour
         // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
         CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
         
+        Transform newShootPosTransform = newPlayer.transform.Find("ShootPos");
+        shootController.shootPos = newShootPosTransform.gameObject;
+        shootController.SetCanShoot(true);
+        if (freeLookCamera != null)
+        {
+            text_dieText.SetActive(false);
+            freeLookCamera.Follow = newPlayer.transform;
+            freeLookCamera.LookAt = newPlayer.transform;
+        }
+        // 기존 플레이어에서 TestPlayerMove 스크립트를 제거하여 시체로 남깁니다.
+        Destroy(GetComponent<TestPlayerMove>());
+        Destroy(GetComponent<ShootController>());
+        Destroy(GetComponent<ItemUse>());
+
+        // 카메라 설정이 완료된 후 새 플레이어의 이동을 활성화
+        playerCode.isDead = false;
+
+        yield return null;
+    }
+
+    IEnumerator RespawnChicken()
+    {
+        // 새 플레이어를 생성한다
+        GameObject newPlayer = Instantiate(ChickenPrefab, RespawnPointChicken.transform.position, RespawnPointChicken.transform.rotation);
+
+        // 기존 플레이어 오브젝트와 차별점을 위해, 리스폰된 오브젝트에 숫자를 기입한다.
+        newPlayer.name = "Player" + (dieCount + 1);
+
+
+        TestPlayerMove playerCode = newPlayer.GetComponent<TestPlayerMove>();
+
+        GameObject text_dieText = GameObject.Find("Canvas").transform.Find("text_dieText").gameObject;
+        text_dieText.SetActive(true);
+
+        ShootController shoot = gameObject.GetComponent<ShootController>();
+        shoot.SetCanShoot(false);
+        ShootController shootController = newPlayer.GetComponent<ShootController>();
+        shootController.SetCanShoot(false);
+
+        Item item = GameObject.FindObjectOfType<Item>();
+        item.itemOK = false;
+        item.itemType = Item.ItemType.None;
+
+        Camera camera = FindObjectOfType<Camera>();
+        playerCode.cameraTransform = camera.transform;
+        Transform newRespawnPoint = GameObject.Find("ChickenRespawnPoint").transform;
+        playerCode.RespawnPointChicken = newRespawnPoint;
+
+        // 새 플레이어가 움직이지 않도록 설정
+        playerCode.isDead = true;
+
+        // 기존 플레이어의 Rigidbody 회전 고정을 해제합니다.
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.constraints = RigidbodyConstraints.None;
+        }
+
+        yield return new WaitForSeconds(2.0f);
+
+        // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
+        CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+
         Transform newShootPosTransform = newPlayer.transform.Find("ShootPos");
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
