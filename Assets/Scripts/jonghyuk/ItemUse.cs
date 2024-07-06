@@ -7,9 +7,10 @@ public class ItemUse : MonoBehaviour
 {
     Item Item;
 
-    float propellerSpeed = 0.85f;
+    float propellerSpeed = 2.0f;
 
     Rigidbody rb;
+
 
     bool useStart = false;
 
@@ -29,13 +30,10 @@ public class ItemUse : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl) && Item.itemOK)
         {
             useStart = true;
-            print("버튼 클릭 테스트");
         }
 
         if (useStart)
         {
-            print("클릭 확인 테스트");
-            StopAllCoroutines();
             StartCoroutine(PropellerUse());
         }
     }
@@ -46,7 +44,7 @@ public class ItemUse : MonoBehaviour
     {
         rb.AddForce(Vector3.up * propellerSpeed, ForceMode.Acceleration);
         yield return null;
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(1.65f);
         Item.itemType = Item.ItemType.None;
         TestPlayerMove testPlayerMove = GetComponent<TestPlayerMove>();
         testPlayerMove.isJumping = true;

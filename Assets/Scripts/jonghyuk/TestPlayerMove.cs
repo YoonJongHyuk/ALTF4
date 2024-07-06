@@ -187,8 +187,6 @@ public class TestPlayerMove : MonoBehaviour
         }
         else if (other.gameObject.tag == "ChangeZone")
         {
-            print("테스트");
-
             // Player와 RespawnPoint 활성화
             GameObject player = GameObject.Find("FourStage").transform.Find("Player").gameObject;
             GameObject respawnPoint = GameObject.Find("FourStage").transform.Find("RespawnPoint").gameObject;
