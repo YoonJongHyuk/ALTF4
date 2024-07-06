@@ -183,6 +183,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f1001fc718aef3847ae3f7eba93cd6ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerType: 1
   maximumSpeed: 7
   jumpForce: 5
   rotationSpeed: 720
@@ -207,9 +208,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b518350cfc97674cb80e25b705bb122, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shootPos: {fileID: 0}
-  shootPrefab: {fileID: 0}
-  shootingPower: 12
+  shootPos: {fileID: 8401095267544582659}
+  shootPrefab: {fileID: 6841725156725232683, guid: df6059b1774e70040ac6d3076dddef64, type: 3}
+  shootingPower: 22
 --- !u!114 &8123560548090843630
 MonoBehaviour:
   m_ObjectHideFlags: 0

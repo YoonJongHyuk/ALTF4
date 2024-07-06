@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemUse : MonoBehaviour
@@ -28,15 +29,18 @@ public class ItemUse : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftControl) && Item.itemOK)
         {
             useStart = true;
+            print("버튼 클릭 테스트");
         }
 
         if (useStart)
         {
+            print("클릭 확인 테스트");
+            StopAllCoroutines();
             StartCoroutine(PropellerUse());
         }
     }
 
-
+    
 
     IEnumerator PropellerUse()
     {
@@ -49,4 +53,5 @@ public class ItemUse : MonoBehaviour
         Item.itemOK = false;
         useStart = false;
     }
+
 }

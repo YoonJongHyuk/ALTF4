@@ -25,6 +25,7 @@ public class Item : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Shoot"))
         {
+            print("충돌 테스트");
             switch (itemType)
             {
                 case ItemType.None:

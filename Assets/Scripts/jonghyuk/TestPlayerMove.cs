@@ -14,7 +14,7 @@ public class TestPlayerMove : MonoBehaviour
         Chicken
     }
 
-    PlayerType playerType;
+    public PlayerType playerType;
 
     public float maximumSpeed = 3f;
     public float jumpForce = 10f;
@@ -48,7 +48,6 @@ public class TestPlayerMove : MonoBehaviour
 
     private void Start()
     {
-        playerType = PlayerType.Chicken;
         item = GameObject.FindObjectOfType<Item>();
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
@@ -164,7 +163,7 @@ public class TestPlayerMove : MonoBehaviour
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "RollingTrap")
         {
@@ -186,23 +185,33 @@ public class TestPlayerMove : MonoBehaviour
                 }
             }
         }
-        if (other.gameObject.tag == "ChangeZone")
+        else if (other.gameObject.tag == "ChangeZone")
         {
             print("테스트");
+
+            // Player와 RespawnPoint 활성화
             GameObject player = GameObject.Find("FourStage").transform.Find("Player").gameObject;
             GameObject respawnPoint = GameObject.Find("FourStage").transform.Find("RespawnPoint").gameObject;
             player.SetActive(true);
             respawnPoint.SetActive(true);
+
+            // PrioritySetting 설정
             PrioritySetting setting = GameObject.FindObjectOfType<PrioritySetting>();
             setting.buttonFreeLook1();
+
+            // FreeLook 카메라 설정
             GameObject freelook1 = GameObject.Find("CameraParent").transform.Find("FreeLook Camera1").gameObject;
             GameObject freelook2 = GameObject.Find("CameraParent").transform.Find("FreeLook Camera2").gameObject;
             freelook1.SetActive(true);
-            print(freelook1);
             freelook2.SetActive(false);
-            playerType = PlayerType.Player;
-            gameObject.SetActive(false);
-            RespawnPointChicken.gameObject.SetActive(false);
+
+            TestPlayerMove playerMove = player.GetComponent<TestPlayerMove>();
+
+            // PlayerType을 Player로 변경하고 리스폰
+            playerMove.playerType = PlayerType.Player;
+            Destroy(other.gameObject);
+            gameObject.SetActive(false);  // ChangeZone 트리거 객체를 비활성화
+            RespawnPointChicken.gameObject.SetActive(false);  // 기존 RespawnPoint를 비활성화
         }
     }
 
@@ -237,6 +246,7 @@ public class TestPlayerMove : MonoBehaviour
 
     IEnumerator RespawnPlayer()
     {
+        print("플레이어 테스트");
         // 새 플레이어를 생성한다
         GameObject newPlayer = Instantiate(PlayerPrefab, RespawnPoint.transform.position, RespawnPoint.transform.rotation);
 
@@ -277,8 +287,8 @@ public class TestPlayerMove : MonoBehaviour
 
         // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
         CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
-        
-        Transform newShootPosTransform = newPlayer.transform.Find("ShootPos");
+
+        Transform newShootPosTransform = newPlayer.GetComponent<Transform>().transform.Find("ShootPos");
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
         if (freeLookCamera != null)
@@ -300,14 +310,17 @@ public class TestPlayerMove : MonoBehaviour
 
     IEnumerator RespawnChicken()
     {
+        print("치킨 테스트");
         // 새 플레이어를 생성한다
         GameObject newPlayer = Instantiate(ChickenPrefab, RespawnPointChicken.transform.position, RespawnPointChicken.transform.rotation);
 
         // 기존 플레이어 오브젝트와 차별점을 위해, 리스폰된 오브젝트에 숫자를 기입한다.
         newPlayer.name = "Player" + (dieCount + 1);
 
-
         TestPlayerMove playerCode = newPlayer.GetComponent<TestPlayerMove>();
+
+        // 여기에서 playerType을 Chicken으로 설정합니다
+        playerCode.playerType = PlayerType.Chicken;
 
         GameObject text_dieText = GameObject.Find("Canvas").transform.Find("text_dieText").gameObject;
         text_dieText.SetActive(true);
@@ -341,7 +354,7 @@ public class TestPlayerMove : MonoBehaviour
         // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
         CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
 
-        Transform newShootPosTransform = newPlayer.transform.Find("ShootPos");
+        Transform newShootPosTransform = newPlayer.GetComponent<Transform>().transform.Find("ShootPos");
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
         if (freeLookCamera != null)
