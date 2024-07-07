@@ -20,8 +20,10 @@ public class TestPlayerMove : MonoBehaviour
     public float jumpForce = 10f;
     public float rotationSpeed = 20f;
     public float rollForce = 10f;  // 플레이어가 구를 때 가할 힘의 크기
-    bool invincibility = false;
+    float fallSpeedThreshold = -20f;
 
+    bool invincibility = false;
+    bool isRegdoll = false;
     public bool isRoll;
     public bool isJumping;
     public bool isDead = false;
@@ -78,7 +80,28 @@ public class TestPlayerMove : MonoBehaviour
             isRoll = false;
             Roll();
             StartCoroutine(WaitForit());
-            WaitForit();
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            isRegdoll = true;
+        }
+
+        if (rb.velocity.y < fallSpeedThreshold && !isDead && playerType == PlayerType.Player && !isRegdoll)
+        {
+            // 사망하고, 리스폰한다
+            Die();
+            switch (playerType)
+            {
+                case PlayerType.Player:
+                    StopAllCoroutines();
+                    StartCoroutine(RespawnPlayer());
+                    break;
+                case PlayerType.Chicken:
+                    StopAllCoroutines();
+                    StartCoroutine(RespawnChicken());
+                    break;
+            }
         }
     }
 
@@ -138,6 +161,11 @@ public class TestPlayerMove : MonoBehaviour
         {
             // 점프가 가능하게 된다
             isJumping = false;
+            if (isRegdoll)
+            {
+                isRegdoll = false;
+                isJumping = false;
+            }
         }
         // 만일, 플레이어가 함정에 부딪힌다면
         if (collision.gameObject.CompareTag("Trap"))
@@ -158,7 +186,6 @@ public class TestPlayerMove : MonoBehaviour
                         StartCoroutine(RespawnChicken());
                         break;
                 }
-                
             }
         }
     }
@@ -207,6 +234,7 @@ public class TestPlayerMove : MonoBehaviour
 
             // PlayerType을 Player로 변경하고 리스폰
             playerMove.playerType = PlayerType.Player;
+            playerMove.isJumping = false;
             Destroy(other.gameObject);
             gameObject.SetActive(false);  // ChangeZone 트리거 객체를 비활성화
             RespawnPointChicken.gameObject.SetActive(false);  // 기존 RespawnPoint를 비활성화
@@ -253,6 +281,7 @@ public class TestPlayerMove : MonoBehaviour
 
 
         TestPlayerMove playerCode = newPlayer.GetComponent<TestPlayerMove>();
+        playerCode.isJumping = false;
 
         GameObject text_dieText = GameObject.Find("Canvas").transform.Find("text_dieText").gameObject;
         text_dieText.SetActive(true);
@@ -316,6 +345,8 @@ public class TestPlayerMove : MonoBehaviour
         newPlayer.name = "Player" + (dieCount + 1);
 
         TestPlayerMove playerCode = newPlayer.GetComponent<TestPlayerMove>();
+
+        playerCode.isJumping = false;
 
         // 여기에서 playerType을 Chicken으로 설정합니다
         playerCode.playerType = PlayerType.Chicken;

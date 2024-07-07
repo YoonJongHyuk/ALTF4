@@ -7,12 +7,11 @@ public class ItemUse : MonoBehaviour
 {
     Item Item;
 
-    float propellerSpeed = 2.0f;
-
     Rigidbody rb;
 
+    private Coroutine propellerCoroutine;
 
-    bool useStart = false;
+    public bool useStart = false;
 
     // Start is called before the first frame update
     void Start()
@@ -24,32 +23,37 @@ public class ItemUse : MonoBehaviour
     }
 
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.LeftControl) && Item.itemOK)
+        if (Input.GetKey(KeyCode.LeftControl) && Item.itemOK)
         {
+            print("버튼 클릭 테스트");
             useStart = true;
         }
-
         if (useStart)
         {
-            StartCoroutine(PropellerUse());
+            useStart = false;
+            Item.itemOK = false;
+            if (propellerCoroutine != null)
+            {
+                StopCoroutine(propellerCoroutine);
+            }
+            propellerCoroutine = StartCoroutine(PropellerUse());
         }
     }
 
-    
+
 
     IEnumerator PropellerUse()
     {
-        rb.AddForce(Vector3.up * propellerSpeed, ForceMode.Acceleration);
-        yield return null;
-        yield return new WaitForSeconds(1.65f);
+        rb.AddForce(Vector3.up * 950f, ForceMode.Acceleration);  // 힘을 더 크게 설정
+
         Item.itemType = Item.ItemType.None;
         TestPlayerMove testPlayerMove = GetComponent<TestPlayerMove>();
         testPlayerMove.isJumping = true;
-        Item.itemOK = false;
-        useStart = false;
+
+        yield return new WaitForFixedUpdate();  // 고정된 업데이트 루프 내에서 실행
+        yield return new WaitForSeconds(1.65f);
     }
 
 }

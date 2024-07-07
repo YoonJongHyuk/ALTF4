@@ -9,6 +9,8 @@ TagManager:
   - Shoot
   - RollingTrap
   - ChangeZone
+  - Puzzle
+  - Portal
   layers:
   - Default
   - TransparentFX
