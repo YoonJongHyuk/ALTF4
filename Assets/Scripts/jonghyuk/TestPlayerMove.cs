@@ -337,69 +337,85 @@ public class TestPlayerMove : MonoBehaviour
 
     IEnumerator RespawnChicken()
     {
+        // 디버그용 메시지 출력
         print("치킨 테스트");
-        // 새 플레이어를 생성한다
+
+        // 새 플레이어(치킨) 생성
         GameObject newPlayer = Instantiate(ChickenPrefab, RespawnPointChicken.transform.position, RespawnPointChicken.transform.rotation);
 
-        // 기존 플레이어 오브젝트와 차별점을 위해, 리스폰된 오브젝트에 숫자를 기입한다.
+        // 새 플레이어의 이름에 번호 추가
         newPlayer.name = "Player" + (dieCount + 1);
 
+        // 새 플레이어의 TestPlayerMove 컴포넌트 가져오기
         TestPlayerMove playerCode = newPlayer.GetComponent<TestPlayerMove>();
-
         playerCode.isJumping = false;
 
-        // 여기에서 playerType을 Chicken으로 설정합니다
+        // 새 플레이어의 타입을 치킨으로 설정
         playerCode.playerType = PlayerType.Chicken;
 
+        // 화면에 표시될 텍스트 오브젝트 활성화
         GameObject text_dieText = GameObject.Find("Canvas").transform.Find("text_dieText").gameObject;
         text_dieText.SetActive(true);
 
+        // 기존 플레이어의 ShootController 비활성화
         ShootController shoot = gameObject.GetComponent<ShootController>();
         shoot.SetCanShoot(false);
+
+        // 새 플레이어의 ShootController 비활성화
         ShootController shootController = newPlayer.GetComponent<ShootController>();
         shootController.SetCanShoot(false);
 
+        // 아이템 상태 초기화
         Item item = GameObject.FindObjectOfType<Item>();
         item.itemOK = false;
         item.itemType = Item.ItemType.None;
 
+        // 카메라 참조 설정
         Camera camera = FindObjectOfType<Camera>();
         playerCode.cameraTransform = camera.transform;
+
+        // 새 리스폰 지점 설정
         Transform newRespawnPoint = GameObject.Find("ChickenRespawnPoint").transform;
         playerCode.RespawnPointChicken = newRespawnPoint;
 
-        // 새 플레이어가 움직이지 않도록 설정
+        // 새 플레이어의 이동을 일시적으로 비활성화
         playerCode.isDead = true;
 
-        // 기존 플레이어의 Rigidbody 회전 고정을 해제합니다.
+        // 기존 플레이어의 Rigidbody 제약 해제
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null)
         {
             rb.constraints = RigidbodyConstraints.None;
         }
 
+        // 2초 대기
         yield return new WaitForSeconds(2.0f);
 
-        // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
+        // 시네머신 FreeLook 카메라 설정 업데이트
         CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
 
+        // 새 플레이어의 ShootPos 설정 및 ShootController 활성화
         Transform newShootPosTransform = newPlayer.GetComponent<Transform>().transform.Find("ShootPos");
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
+
         if (freeLookCamera != null)
         {
+            // 텍스트 비활성화 및 카메라 Follow, LookAt 설정 업데이트
             text_dieText.SetActive(false);
             freeLookCamera.Follow = newPlayer.transform;
             freeLookCamera.LookAt = newPlayer.transform;
         }
-        // 기존 플레이어에서 TestPlayerMove 스크립트를 제거하여 시체로 남깁니다.
+
+        // 기존 플레이어의 스크립트 제거하여 시체로 남김
         Destroy(GetComponent<TestPlayerMove>());
         Destroy(GetComponent<ShootController>());
         Destroy(GetComponent<ItemUse>());
 
-        // 카메라 설정이 완료된 후 새 플레이어의 이동을 활성화
+        // 새 플레이어의 이동 활성화
         playerCode.isDead = false;
 
+        // 코루틴 종료
         yield return null;
     }
 }
