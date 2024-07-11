@@ -6319,7 +6319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &857487672
 Transform:
   m_ObjectHideFlags: 0
@@ -9721,9 +9721,10 @@ GameObject:
   - component: {fileID: 1291641307}
   - component: {fileID: 1291641306}
   - component: {fileID: 1291641305}
+  - component: {fileID: 1291641309}
   m_Layer: 8
   m_Name: MoveFloor
-  m_TagString: Untagged
+  m_TagString: MovingWalk
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -9814,6 +9815,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1028094555}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1291641309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1291641304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 141bd0b915a6e3c4cb4f612361f61c2b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 2
 --- !u!1 &1305567586
 GameObject:
   m_ObjectHideFlags: 3
@@ -11922,7 +11936,7 @@ MonoBehaviour:
   m_YAxis:
     Value: 1
     m_SpeedMode: 0
-    m_MaxSpeed: 3
+    m_MaxSpeed: 4
     m_AccelTime: 0.2
     m_DecelTime: 0.1
     m_InputAxisName: Mouse Y
