@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class TestPlayerMove : MonoBehaviour
 {
@@ -29,7 +30,9 @@ public class TestPlayerMove : MonoBehaviour
     public bool isJumping;
     public bool isDead = false;
 
+    Animator anim;
 
+    float rotY;
 
 
     public Transform RespawnPoint;
@@ -44,6 +47,8 @@ public class TestPlayerMove : MonoBehaviour
     public static int dieCount = 0;  // dieCount 변수를 static으로 선언하여 모든 인스턴스에서 공유
     private TMP_Text killCountText;  // killCountText 변수를 선언
 
+    TipUIManager tipUI;
+
     public Transform cameraTransform;
     private Rigidbody rb;
 
@@ -57,6 +62,7 @@ public class TestPlayerMove : MonoBehaviour
         Cursor.visible = false;
         isJumping = false;
         isRoll = true;
+        anim = GetComponentInChildren<Animator>();
 
         // Kill Count Text를 찾습니다
         GameObject text_killCount = GameObject.Find("Canvas").transform.Find("tmp_killCount").gameObject;
@@ -72,7 +78,6 @@ public class TestPlayerMove : MonoBehaviour
         if (isDead == false)
         {
             Jump();
-            //RotatePlayer();
         }
 
         // Left Control 키 입력을 감지합니다.
@@ -132,18 +137,47 @@ public class TestPlayerMove : MonoBehaviour
 
     private void MovePlayer()
     {
+        // 플레이어의 수평 입력을 가져옵니다.
         float horizontalInput = Input.GetAxis("Horizontal");
+        // 플레이어의 수직 입력을 가져옵니다.
         float verticalInput = Input.GetAxis("Vertical");
 
-        Vector3 movementDirection = new Vector3(horizontalInput, 0, verticalInput);
+        // 수평 및 수직 입력을 사용하여 이동 방향을 계산합니다.
+        Vector3 movementDirection = new Vector3(horizontalInput, 0f, verticalInput).normalized;
+        // 입력 크기를 0과 1 사이로 클램프합니다.
         float inputMagnitude = Mathf.Clamp01(movementDirection.magnitude);
+        // 이동 속도를 계산합니다.
         float speed = inputMagnitude * maximumSpeed;
 
+        // 카메라의 회전을 기준으로 이동 방향을 변환합니다.
         movementDirection = Quaternion.AngleAxis(cameraTransform.rotation.eulerAngles.y, Vector3.up) * movementDirection;
         movementDirection.Normalize();
 
+        // 속도를 계산합니다.
         Vector3 velocity = movementDirection * speed;
+        // Rigidbody를 사용하여 플레이어의 위치를 이동합니다.
         rb.MovePosition(rb.position + velocity * Time.fixedDeltaTime);
+
+        // 이동 방향으로 플레이어의 Y축 회전을 설정합니다.
+        if (movementDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(movementDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
+
+        // Animator가 있는 경우 애니메이션 상태를 업데이트합니다.
+        if (anim != null)
+        {
+            // 플레이어가 움직이고 있는지 여부를 계산합니다.
+            bool isMoving = Mathf.Abs(horizontalInput) > 0 || Mathf.Abs(verticalInput) > 0;
+            // 애니메이터의 'moveBool' 파라미터를 업데이트합니다.
+            anim.SetBool("moveBool", isMoving);
+        }
+        else
+        {
+            // Animator 컴포넌트가 없으면 경고를 출력합니다.
+            Debug.LogWarning("Animator component is missing!");
+        }
     }
 
     private void Jump()
@@ -152,6 +186,7 @@ public class TestPlayerMove : MonoBehaviour
         {
             isJumping = true;
             rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            anim.SetBool("jumpBool", true);
         }
     }
 
@@ -162,6 +197,7 @@ public class TestPlayerMove : MonoBehaviour
         {
             // 점프가 가능하게 된다
             isJumping = false;
+            anim.SetBool("jumpBool", false);
             if (isRegdoll)
             {
                 isRegdoll = false;
@@ -256,9 +292,11 @@ public class TestPlayerMove : MonoBehaviour
 
     public void Die()
     {
+        tipUI = GameObject.Find("EventSystem").transform.GetComponent<TipUIManager>();
         // 데스 카운트가 늘어나고, UI를 업데이트한다.
         isDead = true;
         dieCount++;
+        tipUI.ShowTipUI();
         UpdateKillCountText();
     }
 
