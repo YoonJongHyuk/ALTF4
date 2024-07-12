@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TestPlayerMove : MonoBehaviour
 {
@@ -41,7 +42,7 @@ public class TestPlayerMove : MonoBehaviour
 
 
     public static int dieCount = 0;  // dieCount 변수를 static으로 선언하여 모든 인스턴스에서 공유
-    private Text killCountText;  // killCountText 변수를 선언
+    private TMP_Text killCountText;  // killCountText 변수를 선언
 
     public Transform cameraTransform;
     private Rigidbody rb;
@@ -58,10 +59,10 @@ public class TestPlayerMove : MonoBehaviour
         isRoll = true;
 
         // Kill Count Text를 찾습니다
-        GameObject text_killCount = GameObject.Find("Canvas").transform.Find("text_killCount").gameObject;
+        GameObject text_killCount = GameObject.Find("Canvas").transform.Find("tmp_killCount").gameObject;
         if (text_killCount != null)
         {
-            killCountText = text_killCount.GetComponent<Text>();
+            killCountText = text_killCount.GetComponent<TMP_Text>();
             UpdateKillCountText();
         }
     }
@@ -283,7 +284,7 @@ public class TestPlayerMove : MonoBehaviour
         TestPlayerMove playerCode = newPlayer.GetComponent<TestPlayerMove>();
         playerCode.isJumping = false;
 
-        GameObject text_dieText = GameObject.Find("Canvas").transform.Find("text_dieText").gameObject;
+        GameObject text_dieText = GameObject.Find("Canvas").transform.Find("tmp_dieText").gameObject;
         text_dieText.SetActive(true);
 
         ShootController shoot = gameObject.GetComponent<ShootController>();
@@ -354,7 +355,7 @@ public class TestPlayerMove : MonoBehaviour
         playerCode.playerType = PlayerType.Chicken;
 
         // 화면에 표시될 텍스트 오브젝트 활성화
-        GameObject text_dieText = GameObject.Find("Canvas").transform.Find("text_dieText").gameObject;
+        GameObject text_dieText = GameObject.Find("Canvas").transform.Find("tmp_dieText").gameObject;
         text_dieText.SetActive(true);
 
         // 기존 플레이어의 ShootController 비활성화
