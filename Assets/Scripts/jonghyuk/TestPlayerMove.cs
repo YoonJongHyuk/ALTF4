@@ -292,6 +292,7 @@ public class TestPlayerMove : MonoBehaviour
 
     public void Die()
     {
+        anim.SetBool("dieBool", true);
         tipUI = GameObject.Find("EventSystem").transform.GetComponent<TipUIManager>();
         // 데스 카운트가 늘어나고, UI를 업데이트한다.
         isDead = true;
