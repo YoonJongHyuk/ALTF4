@@ -7,9 +7,9 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
+
 public class TestPlayerMove : MonoBehaviour
 {
-
     public enum PlayerType
     {
         Player,
@@ -42,6 +42,8 @@ public class TestPlayerMove : MonoBehaviour
     public Transform RespawnPointChicken;
     public GameObject ChickenPrefab;
 
+    public GameObject RagdollPrefab;
+
 
 
     public static int dieCount = 0;  // dieCount 변수를 static으로 선언하여 모든 인스턴스에서 공유
@@ -56,13 +58,25 @@ public class TestPlayerMove : MonoBehaviour
 
     private void Start()
     {
+        switch (playerType)
+        {
+            case PlayerType.Player:
+                if (transform.Find("Guard02").gameObject != null)
+                {
+                    transform.Find("Guard02").gameObject.SetActive(true);
+                }
+                break;
+        }
+        
         item = GameObject.FindObjectOfType<Item>();
+
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         isJumping = false;
         isRoll = true;
         anim = GetComponentInChildren<Animator>();
+
 
         // Kill Count Text를 찾습니다
         GameObject text_killCount = GameObject.Find("Canvas").transform.Find("tmp_killCount").gameObject;
@@ -97,17 +111,6 @@ public class TestPlayerMove : MonoBehaviour
         {
             // 사망하고, 리스폰한다
             Die();
-            switch (playerType)
-            {
-                case PlayerType.Player:
-                    StopAllCoroutines();
-                    StartCoroutine(RespawnPlayer());
-                    break;
-                case PlayerType.Chicken:
-                    StopAllCoroutines();
-                    StartCoroutine(RespawnChicken());
-                    break;
-            }
         }
     }
 
@@ -212,17 +215,6 @@ public class TestPlayerMove : MonoBehaviour
             {
                 // 사망하고, 리스폰한다
                 Die();
-                switch(playerType)
-                {
-                    case PlayerType.Player:
-                        StopAllCoroutines();
-                        StartCoroutine(RespawnPlayer());
-                        break;
-                    case PlayerType.Chicken:
-                        StopAllCoroutines();
-                        StartCoroutine(RespawnChicken());
-                        break;
-                }
             }
         }
     }
@@ -236,17 +228,6 @@ public class TestPlayerMove : MonoBehaviour
             {
                 // 사망하고, 리스폰한다
                 Die();
-                switch(playerType)
-                {
-                    case PlayerType.Player:
-                        StopAllCoroutines();
-                        StartCoroutine(RespawnPlayer());
-                        break;
-                    case PlayerType.Chicken:
-                        StopAllCoroutines();
-                        StartCoroutine(RespawnChicken());
-                        break;
-                }
             }
         }
         else if (other.gameObject.tag == "ChangeZone")
@@ -292,13 +273,29 @@ public class TestPlayerMove : MonoBehaviour
 
     public void Die()
     {
-        anim.SetBool("dieBool", true);
         tipUI = GameObject.Find("EventSystem").transform.GetComponent<TipUIManager>();
         // 데스 카운트가 늘어나고, UI를 업데이트한다.
         isDead = true;
         dieCount++;
         tipUI.ShowTipUI();
         UpdateKillCountText();
+        switch (playerType)
+        {
+            case PlayerType.Player:
+                // PrioritySetting 설정
+                PrioritySetting setting = GameObject.FindObjectOfType<PrioritySetting>();
+                
+                setting.FreeLook3();
+                StopAllCoroutines();
+                StartCoroutine(RespawnPlayer());
+                setting.FreeLook4();
+                break;
+            case PlayerType.Chicken:
+                anim.SetBool("dieBool", true);
+                StopAllCoroutines();
+                StartCoroutine(RespawnChicken());
+                break;
+        }
     }
 
     private void UpdateKillCountText()
@@ -315,6 +312,20 @@ public class TestPlayerMove : MonoBehaviour
         print("플레이어 테스트");
         // 새 플레이어를 생성한다
         GameObject newPlayer = Instantiate(PlayerPrefab, RespawnPoint.transform.position, RespawnPoint.transform.rotation);
+        transform.Find("Guard02").gameObject.SetActive(false);
+        GameObject newRagdoll = Instantiate(RagdollPrefab, this.gameObject.transform);
+
+
+
+
+        // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
+        CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+        CinemachineVirtualCamera virtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+
+        virtualCamera.Follow = newRagdoll.transform;
+        virtualCamera.LookAt = newRagdoll.transform.Find("cm").transform;
+
+
 
         // 기존 플레이어 오브젝트와 차별점을 위해, 리스폰된 오브젝트에 숫자를 기입한다.
         newPlayer.name = "Player" + (dieCount + 1);
@@ -349,21 +360,29 @@ public class TestPlayerMove : MonoBehaviour
         {
             rb.constraints = RigidbodyConstraints.None;
         }
-
+        
         yield return new WaitForSeconds(2.0f);
 
-        // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
-        CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+        
 
         Transform newShootPosTransform = newPlayer.GetComponent<Transform>().transform.Find("ShootPos");
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
         if (freeLookCamera != null)
         {
+            
+
             text_dieText.SetActive(false);
             freeLookCamera.Follow = newPlayer.transform;
             freeLookCamera.LookAt = newPlayer.transform;
+            virtualCamera.Follow = newPlayer.transform;
+            virtualCamera.LookAt = newPlayer.transform;
+
+
         }
+
+        
+
         // 기존 플레이어에서 TestPlayerMove 스크립트를 제거하여 시체로 남깁니다.
         Destroy(GetComponent<TestPlayerMove>());
         Destroy(GetComponent<ShootController>());
