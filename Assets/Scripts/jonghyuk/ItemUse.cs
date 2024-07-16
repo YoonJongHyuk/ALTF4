@@ -49,8 +49,8 @@ public class ItemUse : MonoBehaviour
         rb.AddForce(Vector3.up * 950f, ForceMode.Acceleration);  // 힘을 더 크게 설정
 
         Item.itemType = Item.ItemType.None;
-        PlayerManager manager = GetComponent<PlayerManager>();
-        manager.isJumping = true;
+        TestPlayerMove testPlayerMove = GetComponent<TestPlayerMove>();
+        testPlayerMove.isJumping = true;
 
         yield return new WaitForFixedUpdate();  // 고정된 업데이트 루프 내에서 실행
         yield return new WaitForSeconds(1.65f);

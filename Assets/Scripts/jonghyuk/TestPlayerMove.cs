@@ -32,6 +32,7 @@ public class TestPlayerMove : MonoBehaviour
 
     Animator anim;
 
+    float rotY;
 
 
     public Transform RespawnPoint;
@@ -49,7 +50,7 @@ public class TestPlayerMove : MonoBehaviour
     TipUIManager tipUI;
 
     public Transform cameraTransform;
-    public Rigidbody rb;
+    private Rigidbody rb;
 
     Item item;
 
