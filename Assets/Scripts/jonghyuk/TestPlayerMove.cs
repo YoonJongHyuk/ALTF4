@@ -32,7 +32,8 @@ public class TestPlayerMove : MonoBehaviour
     public bool isDead = false;
     bool skyRagdoll = false;
 
-    Animator anim;
+    [HideInInspector]
+    public Animator anim;
 
     float rotY;
 
@@ -47,6 +48,10 @@ public class TestPlayerMove : MonoBehaviour
     public GameObject RagdollPrefab;
 
     Camera ragdollCamera;
+
+    Vector3 movementDirection;
+
+    bool isMove;
 
 
 
@@ -100,7 +105,7 @@ public class TestPlayerMove : MonoBehaviour
         }
 
         // Left Control 키 입력을 감지합니다.
-        if (Input.GetKeyDown(KeyCode.LeftControl) && isDead == false && isRoll && !item.itemOK && !isJumping && isRegdoll == false)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && isDead == false && isRoll && !item.itemOK && !isJumping && isRegdoll == false && isMove)
         {
             isRoll = false;
             Roll();
@@ -197,8 +202,12 @@ public class TestPlayerMove : MonoBehaviour
 
     void Roll()
     {
-        // 플레이어의 앞 방향으로 힘을 가합니다.
-        rb.AddForce(Camera.main.transform.forward * rollForce, ForceMode.Impulse);
+        if (playerType == PlayerType.Player)
+        {
+            anim.SetTrigger("Rolling");
+            // 플레이어의 앞 방향으로 힘을 가합니다.
+            rb.AddForce(Camera.main.transform.forward * rollForce, ForceMode.Impulse);
+        }
     }
 
     private void MovePlayer()
@@ -209,7 +218,9 @@ public class TestPlayerMove : MonoBehaviour
         float verticalInput = Input.GetAxis("Vertical");
 
         // 수평 및 수직 입력을 사용하여 이동 방향을 계산합니다.
-        Vector3 movementDirection = new Vector3(horizontalInput, 0f, verticalInput).normalized;
+        movementDirection = new Vector3(horizontalInput, 0f, verticalInput).normalized;
+
+        isMove = Mathf.Abs(horizontalInput) > 0 || Mathf.Abs(verticalInput) > 0;
         // 입력 크기를 0과 1 사이로 클램프합니다.
         float inputMagnitude = Mathf.Clamp01(movementDirection.magnitude);
         // 이동 속도를 계산합니다.

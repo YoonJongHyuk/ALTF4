@@ -69,7 +69,17 @@ public class ShootController : MonoBehaviour
         rb = shoot.GetComponent<Rigidbody>();
         // 카메라의 정면 방향으로 발사체에 물리적 힘을 가함
         rb.AddForce(Camera.main.transform.forward * shootingPower, ForceMode.Impulse);
-        StartCoroutine(WaitForit(shoot));
+
+        switch (player.playerType)
+        {
+            case TestPlayerMove.PlayerType.Player:
+                StartCoroutine(WaitForitChicken(shoot));
+                break;
+
+            case TestPlayerMove.PlayerType.Chicken:
+                StartCoroutine(WaitForitEgg());
+                break;
+        }
     }
 
     public void SetCanShoot(bool value)
@@ -83,10 +93,16 @@ public class ShootController : MonoBehaviour
     }
 
 
-    IEnumerator WaitForit(GameObject value)
+    IEnumerator WaitForitChicken(GameObject value)
     {
         yield return new WaitForSeconds(delyTime);
         Destroy(value.gameObject);
+        canShoot = true;
+    }
+
+    IEnumerator WaitForitEgg()
+    {
+        yield return new WaitForSeconds(delyTime);
         canShoot = true;
     }
 }

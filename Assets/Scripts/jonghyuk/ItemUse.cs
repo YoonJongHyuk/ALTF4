@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class ItemUse : MonoBehaviour
 {
+
     Item Item;
 
     Rigidbody rb;
@@ -51,6 +52,7 @@ public class ItemUse : MonoBehaviour
         Item.itemType = Item.ItemType.None;
         TestPlayerMove testPlayerMove = GetComponent<TestPlayerMove>();
         testPlayerMove.isJumping = true;
+        testPlayerMove.anim.SetBool("jumpBool", true);
 
         yield return new WaitForFixedUpdate();  // 고정된 업데이트 루프 내에서 실행
         yield return new WaitForSeconds(1.65f);

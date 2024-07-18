@@ -8,28 +8,30 @@ public class ShootPuzzle : MonoBehaviour
     public Transform doorClsePos;
     Vector3 dir;
 
-    bool isOpen = false;
+    public static int isOpen = 0;
+    bool usePuzzle = false;
 
     // Update is called once per frame
     void Update()
     {
         
-        if (isOpen && door.transform.position.y > doorClsePos.transform.position.y)
+        if (isOpen == 4 && door.transform.position.y > doorClsePos.transform.position.y)
         {
             dir = doorClsePos.position - door.transform.position;
             door.transform.position += dir * Time.deltaTime;
         }
         else if (door.transform.position.y < doorClsePos.transform.position.y)
         {
-            isOpen = false;
+            isOpen = 0;
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Shoot"))
+        if (collision.gameObject.CompareTag("Shoot") && !usePuzzle)
         {
-            isOpen = true;
+            isOpen++;
+            usePuzzle = true;
         }
     }
 }
