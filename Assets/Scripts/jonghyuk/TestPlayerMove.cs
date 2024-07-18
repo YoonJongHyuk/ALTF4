@@ -425,6 +425,8 @@ public class TestPlayerMove : MonoBehaviour
         
 
         Transform newShootPosTransform = newPlayer.GetComponent<Transform>().transform.Find("ShootPos");
+        Transform newLookAtTransform  = newPlayer.GetComponent<Transform>().transform.Find("cm");
+
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
         if (freeLookCamera != null)
@@ -433,7 +435,7 @@ public class TestPlayerMove : MonoBehaviour
 
             text_dieText.SetActive(false);
             freeLookCamera.Follow = newPlayer.transform;
-            freeLookCamera.LookAt = freeLookCamera.Follow;
+            freeLookCamera.LookAt = newLookAtTransform;
 
             cameraController.player = newPlayer;
 
@@ -516,6 +518,8 @@ public class TestPlayerMove : MonoBehaviour
 
         // 새 플레이어의 ShootPos 설정 및 ShootController 활성화
         Transform newShootPosTransform = newPlayer.GetComponent<Transform>().transform.Find("ShootPos");
+        Transform newLookAtTransform = newPlayer.GetComponent<Transform>().transform.Find("cm");
+
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
 
@@ -524,7 +528,7 @@ public class TestPlayerMove : MonoBehaviour
             // 텍스트 비활성화 및 카메라 Follow, LookAt 설정 업데이트
             text_dieText.SetActive(false);
             freeLookCamera.Follow = newPlayer.transform;
-            freeLookCamera.LookAt = newPlayer.transform;
+            freeLookCamera.LookAt = newLookAtTransform;
         }
 
         // 새 플레이어의 이동 활성화

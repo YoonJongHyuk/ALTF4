@@ -221,6 +221,7 @@ MonoBehaviour:
   jumpForce: 5
   rotationSpeed: 720
   rollForce: 7.5
+  isRegdoll: 0
   isRoll: 0
   isJumping: 0
   isDead: 0
@@ -244,6 +245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shootPos: {fileID: 8401095267544582659}
   shootPrefab: {fileID: 6841725156725232683, guid: df6059b1774e70040ac6d3076dddef64, type: 3}
+  shootChicken: {fileID: 7086347483847435936, guid: be149ab7019317344ba820dbb8273108, type: 3}
   shootingPower: 22
 --- !u!114 &8123560548090843630
 MonoBehaviour:
