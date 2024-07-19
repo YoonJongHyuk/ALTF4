@@ -12,6 +12,7 @@ TagManager:
   - Puzzle
   - Portal
   - MovingWalk
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
@@ -24,7 +25,7 @@ TagManager:
   - Floor
   - Shoot
   - Camera
-  - 
+  - Ragdoll
   - RollingTrap
   - 
   - 

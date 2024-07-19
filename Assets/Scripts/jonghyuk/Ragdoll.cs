@@ -4,23 +4,12 @@ using UnityEngine;
 
 public class Ragdoll : MonoBehaviour
 {
-    TestPlayerMove player;
+    public Quaternion modelRotation;
 
-    private void Start()
-    {
-        player = GetComponent<TestPlayerMove>();
-    }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == 8)
-        {
-            player.isRegdoll = false;
-        }
-    }
 
-    IEnumerator WakeUpPlayer()
+    private void Update()
     {
-        yield return new WaitForSeconds(2.0f);
+        modelRotation = transform.rotation;
     }
 
 }

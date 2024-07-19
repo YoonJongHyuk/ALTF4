@@ -34,6 +34,7 @@ public class TestPlayerMove : MonoBehaviour
 
     [HideInInspector]
     public Animator anim;
+    Animator animRagdoll;
 
     float rotY;
 
@@ -88,6 +89,7 @@ public class TestPlayerMove : MonoBehaviour
         isJumping = false;
         isRoll = true;
         anim = GetComponentInChildren<Animator>();
+        animRagdoll = transform.Find("RagdollPrefab").GetComponent<Animator>();
 
 
         // Kill Count Text를 찾습니다
@@ -184,19 +186,23 @@ public class TestPlayerMove : MonoBehaviour
             yield return new WaitForSeconds(1.0f);
         else
         {
-            yield return new WaitForSeconds(2.0f);
-            freeLookCamera1.Follow = gameObject.transform;
-            freeLookCamera1.LookAt = gameObject.transform.Find("cm").transform;
-            GameObject player = transform.Find("Guard02").gameObject;
-            player.gameObject.SetActive(true);
-            GameObject ragdollPrefab = transform.Find("RagdollPrefab").gameObject;
-            ragdollPrefab.gameObject.SetActive(false);
-            ragdollPrefab.transform.position = Vector3.zero;
-            ragdollPrefab.transform.rotation = Quaternion.identity;
-            ragdollPrefab.transform.localScale = Vector3.one;
-            isRegdoll = false;
+
+
+            #region 애니메이션 없이 원상복귀
+            //yield return new WaitForSeconds(2.0f);
+            //freeLookCamera1.Follow = gameObject.transform;
+            //freeLookCamera1.LookAt = gameObject.transform.Find("cm").transform;
+            //GameObject player = transform.Find("Guard02").gameObject;
+            //player.gameObject.SetActive(true);
+            //GameObject ragdollPrefab = transform.Find("RagdollPrefab").gameObject;
+            //ragdollPrefab.gameObject.SetActive(false);
+            //ragdollPrefab.transform.position = Vector3.zero;
+            //ragdollPrefab.transform.rotation = Quaternion.identity;
+            //ragdollPrefab.transform.localScale = Vector3.one;
+            //isRegdoll = false;
+            #endregion
         }
-        
+
     }
 
     void Roll()
@@ -294,18 +300,15 @@ public class TestPlayerMove : MonoBehaviour
         }
     }
 
+    #region OnTriggerEnter
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "RollingTrap")
+        if (other.gameObject.CompareTag("RollingTrap") && !isDead && !invincibility)
         {
-            // 죽지 않았을 경우
-            if (!isDead && !invincibility)
-            {
-                // 사망하고, 리스폰한다
-                Die();
-            }
+            // 사망하고, 리스폰한다
+            Die();
         }
-        else if (other.gameObject.tag == "ChangeZone")
+        if (other.gameObject.CompareTag("ChangeZone"))
         {
             // Player와 RespawnPoint 활성화
             GameObject player = GameObject.Find("FourStage").transform.Find("Player").gameObject;
@@ -333,6 +336,7 @@ public class TestPlayerMove : MonoBehaviour
             RespawnPointChicken.gameObject.SetActive(false);  // 기존 RespawnPoint를 비활성화
         }
     }
+    #endregion
 
     private void OnApplicationFocus(bool focus)
     {
@@ -348,19 +352,6 @@ public class TestPlayerMove : MonoBehaviour
 
     public void Die()
     {
-        switch(playerType)
-        {
-            case PlayerType.Player:
-                freeLookCamera1.Follow = gameObject.transform.Find("RagdollPrefab");
-                freeLookCamera1.LookAt = gameObject.transform.Find("RagdollCm").transform;
-                break;
-            
-            case PlayerType.Chicken:
-                break;
-        }
-
-        
-
         tipUI = GameObject.Find("EventSystem").transform.GetComponent<TipUIManager>();
         // 데스 카운트가 늘어나고, UI를 업데이트한다.
         isDead = true;
@@ -370,6 +361,8 @@ public class TestPlayerMove : MonoBehaviour
         switch (playerType)
         {
             case PlayerType.Player:
+                freeLookCamera1.Follow = gameObject.transform.Find("RagdollPrefab");
+                freeLookCamera1.LookAt = gameObject.transform.Find("RagdollCm").transform;
                 StopAllCoroutines();
                 StartCoroutine(RespawnPlayer());
                 break;
@@ -393,14 +386,13 @@ public class TestPlayerMove : MonoBehaviour
     IEnumerator RespawnPlayer()
     {
         print("플레이어 테스트");
-
-        freeLookCamera1.Follow = gameObject.transform.Find("RagdollPrefab");
-        freeLookCamera1.LookAt = gameObject.transform.Find("RagdollCm").transform;
         // 새 플레이어를 생성한다
         GameObject newPlayer = Instantiate(PlayerPrefab, RespawnPoint.transform.position, RespawnPoint.transform.rotation);
         transform.Find("Guard02").gameObject.SetActive(false);
         GameObject newRagdoll = transform.Find("RagdollPrefab").gameObject;
-        
+        newRagdoll.transform.position = gameObject.transform.position;
+
+
         newRagdoll.SetActive(true);
 
 
@@ -463,10 +455,6 @@ public class TestPlayerMove : MonoBehaviour
         Destroy(GetComponent<TestPlayerMove>());
         Destroy(GetComponent<ShootController>());
         Destroy(GetComponent<ItemUse>());
-
-        
-
-        yield return null;
     }
 
     IEnumerator RespawnChicken()
@@ -549,10 +537,5 @@ public class TestPlayerMove : MonoBehaviour
         Destroy(GetComponent<TestPlayerMove>());
         Destroy(GetComponent<ShootController>());
         Destroy(GetComponent<ItemUse>());
-
-        
-
-        // 코루틴 종료
-        yield return null;
     }
 }
