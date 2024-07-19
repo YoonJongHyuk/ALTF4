@@ -897,6 +897,7 @@ MonoBehaviour:
   isRoll: 0
   isJumping: 0
   isDead: 0
+  anim: {fileID: 0}
   RespawnPoint: {fileID: 0}
   PlayerPrefab: {fileID: 6427288321996009732}
   RespawnPointChicken: {fileID: 0}
@@ -1925,28 +1926,8 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6548937689033551471, guid: 3be1466fffe7b084d8c0219c83635b66, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3647265512748608258}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3be1466fffe7b084d8c0219c83635b66, type: 3}
---- !u!1 &1929097307980743557 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6548937689033551471, guid: 3be1466fffe7b084d8c0219c83635b66, type: 3}
-  m_PrefabInstance: {fileID: 4622672229096353258}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3647265512748608258
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1929097307980743557}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f34aeb4b91398cf4eab59792b41d2d63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &7668738571013696355 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3047761565517497993, guid: 3be1466fffe7b084d8c0219c83635b66, type: 3}

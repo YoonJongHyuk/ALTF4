@@ -47,11 +47,12 @@ public class TestPlayerMove : MonoBehaviour
 
     public GameObject RagdollPrefab;
 
-    Camera ragdollCamera;
-
     Vector3 movementDirection;
 
     bool isMove;
+
+    CinemachineFreeLook freeLookCamera1;
+    CinemachineFreeLook freeLookCamera2;
 
 
 
@@ -67,6 +68,8 @@ public class TestPlayerMove : MonoBehaviour
 
     private void Start()
     {
+        freeLookCamera1 = GameObject.Find("CameraParent").transform.Find("FreeLookCamera1").GetComponent<CinemachineFreeLook>();
+        freeLookCamera2 = GameObject.Find("CameraParent").transform.Find("FreeLookCamera2").GetComponent<CinemachineFreeLook>();
         switch (playerType)
         {
             case PlayerType.Player:
@@ -76,7 +79,6 @@ public class TestPlayerMove : MonoBehaviour
                 }
                 break;
         }
-        ragdollCamera = GameObject.Find("Ragdoll Camera").GetComponent<Camera>();
 
         item = GameObject.FindObjectOfType<Item>();
 
@@ -134,8 +136,6 @@ public class TestPlayerMove : MonoBehaviour
         {
             // 사망하고, 리스폰한다
             Die();
-            print(isRegdoll);
-            print("떨어져 죽는다");
         }
     }
 
@@ -166,15 +166,15 @@ public class TestPlayerMove : MonoBehaviour
             skyRagdoll = true;
         }
 
-        ragdollCamera.depth = 0;
-        CameraController cameraController = GameObject.Find("Ragdoll Camera").GetComponent<CameraController>();
-        cameraController.player = transform.Find("RagdollPrefab").gameObject;
-
         GameObject player = transform.Find("Guard02").gameObject;
         player.gameObject.SetActive(false);
         GameObject ragdollPrefab = transform.Find("RagdollPrefab").gameObject;
         ragdollPrefab.transform.position = player.transform.position;
         ragdollPrefab.gameObject.SetActive(true);
+
+        freeLookCamera1.Follow = gameObject.transform.Find("RagdollPrefab");
+        freeLookCamera1.LookAt = gameObject.transform.Find("RagdollCm").transform;
+
         StartCoroutine(ChangeRagdoll());
     }
 
@@ -185,8 +185,8 @@ public class TestPlayerMove : MonoBehaviour
         else
         {
             yield return new WaitForSeconds(2.0f);
-            CameraController cameraController = GameObject.Find("Ragdoll Camera").GetComponent<CameraController>();
-            cameraController.player = transform.gameObject;
+            freeLookCamera1.Follow = gameObject.transform;
+            freeLookCamera1.LookAt = gameObject.transform.Find("cm").transform;
             GameObject player = transform.Find("Guard02").gameObject;
             player.gameObject.SetActive(true);
             GameObject ragdollPrefab = transform.Find("RagdollPrefab").gameObject;
@@ -195,7 +195,6 @@ public class TestPlayerMove : MonoBehaviour
             ragdollPrefab.transform.rotation = Quaternion.identity;
             ragdollPrefab.transform.localScale = Vector3.one;
             isRegdoll = false;
-            ragdollCamera.depth = -2;
         }
         
     }
@@ -319,8 +318,8 @@ public class TestPlayerMove : MonoBehaviour
             setting.buttonFreeLook1();
 
             // FreeLook 카메라 설정
-            GameObject freelook1 = GameObject.Find("CameraParent").transform.Find("FreeLook Camera1").gameObject;
-            GameObject freelook2 = GameObject.Find("CameraParent").transform.Find("FreeLook Camera2").gameObject;
+            GameObject freelook1 = freeLookCamera1.gameObject;
+            GameObject freelook2 = freeLookCamera2.gameObject;
             freelook1.SetActive(true);
             freelook2.SetActive(false);
 
@@ -349,6 +348,19 @@ public class TestPlayerMove : MonoBehaviour
 
     public void Die()
     {
+        switch(playerType)
+        {
+            case PlayerType.Player:
+                freeLookCamera1.Follow = gameObject.transform.Find("RagdollPrefab");
+                freeLookCamera1.LookAt = gameObject.transform.Find("RagdollCm").transform;
+                break;
+            
+            case PlayerType.Chicken:
+                break;
+        }
+
+        
+
         tipUI = GameObject.Find("EventSystem").transform.GetComponent<TipUIManager>();
         // 데스 카운트가 늘어나고, UI를 업데이트한다.
         isDead = true;
@@ -381,20 +393,15 @@ public class TestPlayerMove : MonoBehaviour
     IEnumerator RespawnPlayer()
     {
         print("플레이어 테스트");
-        
-        ragdollCamera.depth = 0;
-        CameraController cameraController = GameObject.Find("Ragdoll Camera").GetComponent<CameraController>();
 
+        freeLookCamera1.Follow = gameObject.transform.Find("RagdollPrefab");
+        freeLookCamera1.LookAt = gameObject.transform.Find("RagdollCm").transform;
         // 새 플레이어를 생성한다
         GameObject newPlayer = Instantiate(PlayerPrefab, RespawnPoint.transform.position, RespawnPoint.transform.rotation);
         transform.Find("Guard02").gameObject.SetActive(false);
-        GameObject newRagdoll = Instantiate(RagdollPrefab, this.gameObject.transform);
-        cameraController.player = newRagdoll;
-
-
-
-        // 시네머신 FreeLook 카메라를 찾아서 Follow와 Look At 속성을 업데이트합니다.
-        CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
+        GameObject newRagdoll = transform.Find("RagdollPrefab").gameObject;
+        
+        newRagdoll.SetActive(true);
 
 
         // 기존 플레이어 오브젝트와 차별점을 위해, 리스폰된 오브젝트에 숫자를 기입한다.
@@ -440,17 +447,13 @@ public class TestPlayerMove : MonoBehaviour
 
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
-        if (freeLookCamera != null)
+        if (freeLookCamera1 != null)
         {
             
 
             text_dieText.SetActive(false);
-            freeLookCamera.Follow = newPlayer.transform;
-            freeLookCamera.LookAt = newLookAtTransform;
-
-            cameraController.player = newPlayer;
-
-            ragdollCamera.depth = -2;
+            freeLookCamera1.Follow = newPlayer.transform;
+            freeLookCamera1.LookAt = newLookAtTransform;
         }
 
         // 카메라 설정이 완료된 후 새 플레이어의 이동을 활성화
@@ -524,9 +527,6 @@ public class TestPlayerMove : MonoBehaviour
         // 2초 대기
         yield return new WaitForSeconds(2.0f);
 
-        // 시네머신 FreeLook 카메라 설정 업데이트
-        CinemachineFreeLook freeLookCamera = FindObjectOfType<CinemachineFreeLook>();
-
         // 새 플레이어의 ShootPos 설정 및 ShootController 활성화
         Transform newShootPosTransform = newPlayer.GetComponent<Transform>().transform.Find("ShootPos");
         Transform newLookAtTransform = newPlayer.GetComponent<Transform>().transform.Find("cm");
@@ -534,12 +534,12 @@ public class TestPlayerMove : MonoBehaviour
         shootController.shootPos = newShootPosTransform.gameObject;
         shootController.SetCanShoot(true);
 
-        if (freeLookCamera != null)
+        if (freeLookCamera2 != null)
         {
             // 텍스트 비활성화 및 카메라 Follow, LookAt 설정 업데이트
             text_dieText.SetActive(false);
-            freeLookCamera.Follow = newPlayer.transform;
-            freeLookCamera.LookAt = newLookAtTransform;
+            freeLookCamera2.Follow = newPlayer.transform;
+            freeLookCamera2.LookAt = newLookAtTransform;
         }
 
         // 새 플레이어의 이동 활성화

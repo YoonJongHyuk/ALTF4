@@ -8,8 +8,6 @@ public class PrioritySetting : MonoBehaviour
     public CinemachineFreeLook freeLookCam1;
     public CinemachineFreeLook freeLookCam2;
 
-    public CinemachineVirtualCamera virtualCamera;
-
     public void buttonFreeLook1()
     {
         freeLookCam1.Priority = 12;
@@ -20,17 +18,5 @@ public class PrioritySetting : MonoBehaviour
     {
         freeLookCam1.Priority = 11;
         freeLookCam2.Priority = 12;
-    }
-
-    public void FreeLook3()
-    {
-        freeLookCam1.Priority = 11;
-        virtualCamera.Priority = 12;
-    }
-
-    public void FreeLook4()
-    {
-        freeLookCam1.Priority = 12;
-        virtualCamera.Priority = 11;
     }
 }

@@ -225,8 +225,9 @@ MonoBehaviour:
   isRoll: 0
   isJumping: 0
   isDead: 0
+  anim: {fileID: 0}
   RespawnPoint: {fileID: 0}
-  PlayerPrefab: {fileID: 4582295833322457900, guid: afd5f701111c52e4980e8f3124002804, type: 3}
+  PlayerPrefab: {fileID: 2753308772434271201, guid: 895dfb5bc7e89d1448234b8399c3effd, type: 3}
   RespawnPointChicken: {fileID: 0}
   ChickenPrefab: {fileID: 5755520298349554730}
   RagdollPrefab: {fileID: 6548937689033551471, guid: 3be1466fffe7b084d8c0219c83635b66, type: 3}
