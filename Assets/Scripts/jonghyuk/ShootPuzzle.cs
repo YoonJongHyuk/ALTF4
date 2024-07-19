@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 public class ShootPuzzle : MonoBehaviour
@@ -30,7 +31,8 @@ public class ShootPuzzle : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Shoot") && !usePuzzle)
         {
-            isOpen++;
+            //isOpen++;
+            isOpen = 4;
             usePuzzle = true;
         }
     }
