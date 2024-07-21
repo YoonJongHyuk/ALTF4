@@ -6,6 +6,7 @@ public class ShootPuzzle : MonoBehaviour
 {
     public GameObject door;
     public Transform doorClsePos;
+    public static bool openDoor = false;
     Vector3 dir;
 
     public static int isOpen = 0;
@@ -22,6 +23,7 @@ public class ShootPuzzle : MonoBehaviour
         
         if (isOpen == 4 && door.transform.position.y > doorClsePos.transform.position.y)
         {
+            openDoor = true;
             dir = doorClsePos.position - door.transform.position;
             door.transform.position += dir * Time.deltaTime;
         }

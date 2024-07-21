@@ -58,6 +58,10 @@ public class TestPlayerMove : MonoBehaviour
     CinemachineFreeLook freeLookCamera1;
     CinemachineFreeLook freeLookCamera2;
 
+    public AudioClip[] sounds;
+
+    AudioSource audioSource;
+
 
 
     public static int dieCount = 0;  // dieCount 변수를 static으로 선언하여 모든 인스턴스에서 공유
@@ -83,6 +87,11 @@ public class TestPlayerMove : MonoBehaviour
                 }
                 break;
         }
+
+        audioSource = GetComponent<AudioSource>();
+        audioSource.volume = 1f;
+
+
 
         item = GameObject.FindObjectOfType<Item>();
 
@@ -362,12 +371,18 @@ public class TestPlayerMove : MonoBehaviour
         switch (playerType)
         {
             case PlayerType.Player:
+                audioSource.clip = sounds[0];
+                audioSource.volume = 0.1f;
+                audioSource.Play();
                 freeLookCamera1.Follow = gameObject.transform.Find("RagdollPrefab");
                 freeLookCamera1.LookAt = gameObject.transform.Find("RagdollCm").transform;
                 StopAllCoroutines();
                 StartCoroutine(RespawnPlayer());
                 break;
             case PlayerType.Chicken:
+                audioSource.clip = sounds[1];
+                audioSource.volume = 0.3f;
+                audioSource.Play();
                 anim.SetBool("dieBool", true);
                 StopAllCoroutines();
                 StartCoroutine(RespawnChicken());
