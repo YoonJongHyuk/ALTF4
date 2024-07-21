@@ -23,6 +23,7 @@ public class TestPlayerMove : MonoBehaviour
     public float jumpForce = 10f;
     public float rotationSpeed = 20f;
     public float rollForce = 10f;  // 플레이어가 구를 때 가할 힘의 크기
+    public float forceAmount = 10f; // 가할 힘의 크기
     float fallSpeedThreshold = -20f;
 
     bool invincibility = false;
@@ -34,7 +35,6 @@ public class TestPlayerMove : MonoBehaviour
 
     [HideInInspector]
     public Animator anim;
-    Animator animRagdoll;
 
     float rotY;
 
@@ -46,7 +46,10 @@ public class TestPlayerMove : MonoBehaviour
     public Transform RespawnPointChicken;
     public GameObject ChickenPrefab;
 
+
     public GameObject RagdollPrefab;
+
+    public GameObject RagdollSpine;
 
     Vector3 movementDirection;
 
@@ -89,7 +92,6 @@ public class TestPlayerMove : MonoBehaviour
         isJumping = false;
         isRoll = true;
         anim = GetComponentInChildren<Animator>();
-        animRagdoll = transform.Find("RagdollPrefab").GetComponent<Animator>();
 
 
         // Kill Count Text를 찾습니다
@@ -159,6 +161,7 @@ public class TestPlayerMove : MonoBehaviour
         
     }
 
+
     void Ragdoll()
     {
         isRegdoll = true;
@@ -189,17 +192,17 @@ public class TestPlayerMove : MonoBehaviour
 
 
             #region 애니메이션 없이 원상복귀
-            //yield return new WaitForSeconds(2.0f);
-            //freeLookCamera1.Follow = gameObject.transform;
-            //freeLookCamera1.LookAt = gameObject.transform.Find("cm").transform;
-            //GameObject player = transform.Find("Guard02").gameObject;
-            //player.gameObject.SetActive(true);
-            //GameObject ragdollPrefab = transform.Find("RagdollPrefab").gameObject;
-            //ragdollPrefab.gameObject.SetActive(false);
-            //ragdollPrefab.transform.position = Vector3.zero;
-            //ragdollPrefab.transform.rotation = Quaternion.identity;
-            //ragdollPrefab.transform.localScale = Vector3.one;
-            //isRegdoll = false;
+            yield return new WaitForSeconds(2.0f);
+            freeLookCamera1.Follow = gameObject.transform;
+            freeLookCamera1.LookAt = gameObject.transform.Find("cm").transform;
+            GameObject player = transform.Find("Guard02").gameObject;
+            player.gameObject.SetActive(true);
+            GameObject ragdollPrefab = transform.Find("RagdollPrefab").gameObject;
+            ragdollPrefab.gameObject.SetActive(false);
+            ragdollPrefab.transform.position = Vector3.zero;
+            ragdollPrefab.transform.rotation = Quaternion.identity;
+            ragdollPrefab.transform.localScale = Vector3.one;
+            isRegdoll = false;
             #endregion
         }
 
@@ -311,7 +314,7 @@ public class TestPlayerMove : MonoBehaviour
         if (other.gameObject.CompareTag("ChangeZone"))
         {
             // Player와 RespawnPoint 활성화
-            GameObject player = GameObject.Find("FourStage").transform.Find("Player").gameObject;
+            GameObject player = GameObject.Find("FourStage").transform.Find("FinalPlayer").gameObject;
             GameObject respawnPoint = GameObject.Find("FourStage").transform.Find("RespawnPoint").gameObject;
             player.SetActive(true);
             respawnPoint.SetActive(true);
@@ -352,11 +355,9 @@ public class TestPlayerMove : MonoBehaviour
 
     public void Die()
     {
-        tipUI = GameObject.Find("EventSystem").transform.GetComponent<TipUIManager>();
         // 데스 카운트가 늘어나고, UI를 업데이트한다.
         isDead = true;
         dieCount++;
-        tipUI.ShowTipUI();
         UpdateKillCountText();
         switch (playerType)
         {
@@ -396,6 +397,9 @@ public class TestPlayerMove : MonoBehaviour
         newRagdoll.SetActive(true);
 
 
+        tipUI = GameObject.Find("EventSystem").transform.GetComponent<TipUIManager>();
+
+
         // 기존 플레이어 오브젝트와 차별점을 위해, 리스폰된 오브젝트에 숫자를 기입한다.
         newPlayer.name = "Player" + (dieCount + 1);
 
@@ -406,8 +410,8 @@ public class TestPlayerMove : MonoBehaviour
         // 새 플레이어가 움직이지 않도록 설정
         playerCode.isDead = true;
 
-        GameObject text_dieText = GameObject.Find("Canvas").transform.Find("tmp_dieText").gameObject;
-        text_dieText.SetActive(true);
+        GameObject image_DieUI = GameObject.Find("Canvas").transform.Find("image_DieUI").gameObject;
+        image_DieUI.SetActive(true);
 
         ShootController shoot = gameObject.GetComponent<ShootController>();
         shoot.SetCanShoot(false);
@@ -441,15 +445,17 @@ public class TestPlayerMove : MonoBehaviour
         shootController.SetCanShoot(true);
         if (freeLookCamera1 != null)
         {
-            
 
-            text_dieText.SetActive(false);
+
+            image_DieUI.SetActive(false);
             freeLookCamera1.Follow = newPlayer.transform;
             freeLookCamera1.LookAt = newLookAtTransform;
         }
 
         // 카메라 설정이 완료된 후 새 플레이어의 이동을 활성화
         playerCode.isDead = false;
+
+        tipUI.ShowTipUI();
 
         // 기존 플레이어에서 TestPlayerMove 스크립트를 제거하여 시체로 남깁니다.
         Destroy(GetComponent<TestPlayerMove>());
@@ -479,8 +485,10 @@ public class TestPlayerMove : MonoBehaviour
         playerCode.playerType = PlayerType.Chicken;
 
         // 화면에 표시될 텍스트 오브젝트 활성화
-        GameObject text_dieText = GameObject.Find("Canvas").transform.Find("tmp_dieText").gameObject;
-        text_dieText.SetActive(true);
+        GameObject image_DieUI = GameObject.Find("Canvas").transform.Find("image_DieUI").gameObject;
+        image_DieUI.SetActive(true);
+
+        tipUI = GameObject.Find("EventSystem").transform.GetComponent<TipUIManager>();
 
         // 기존 플레이어의 ShootController 비활성화
         ShootController shoot = gameObject.GetComponent<ShootController>();
@@ -525,13 +533,17 @@ public class TestPlayerMove : MonoBehaviour
         if (freeLookCamera2 != null)
         {
             // 텍스트 비활성화 및 카메라 Follow, LookAt 설정 업데이트
-            text_dieText.SetActive(false);
+            image_DieUI.SetActive(false);
             freeLookCamera2.Follow = newPlayer.transform;
             freeLookCamera2.LookAt = newLookAtTransform;
         }
 
         // 새 플레이어의 이동 활성화
         playerCode.isDead = false;
+
+        tipUI.ShowTipUI();
+
+
 
         // 기존 플레이어의 스크립트 제거하여 시체로 남김
         Destroy(GetComponent<TestPlayerMove>());

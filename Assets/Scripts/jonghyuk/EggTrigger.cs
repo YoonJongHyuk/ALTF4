@@ -12,6 +12,7 @@ public class EggTrigger : MonoBehaviour
         {
             // 충돌 지점에 파티클 시스템 프리팹 생성
             Instantiate(particlePrefab, collision.contacts[0].point, Quaternion.identity);
+            Destroy(this.gameObject);
         }
     }
 }

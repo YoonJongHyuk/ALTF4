@@ -1315,6 +1315,7 @@ MonoBehaviour:
   jumpForce: 5
   rotationSpeed: 720
   rollForce: 7.5
+  forceAmount: 20
   isRegdoll: 0
   isRoll: 0
   isJumping: 0
@@ -1325,6 +1326,7 @@ MonoBehaviour:
   RespawnPointChicken: {fileID: 0}
   ChickenPrefab: {fileID: 5755520298349554730, guid: c85a269318575424fa97b33a1c5f7395, type: 3}
   RagdollPrefab: {fileID: 6548937689033551471, guid: 3be1466fffe7b084d8c0219c83635b66, type: 3}
+  RagdollSpine: {fileID: 2872434377721760723}
   cameraTransform: {fileID: 0}
 --- !u!114 &3985727595664788340
 MonoBehaviour:
@@ -3334,6 +3336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f34aeb4b91398cf4eab59792b41d2d63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modelRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &7261217529355830181
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,6 +11,11 @@ public class ShootPuzzle : MonoBehaviour
     public static int isOpen = 0;
     bool usePuzzle = false;
 
+    private void Start()
+    {
+        isOpen = 0;
+    }
+
     // Update is called once per frame
     void Update()
     {

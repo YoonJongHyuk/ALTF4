@@ -43,7 +43,7 @@ public class TipUIManager : MonoBehaviour
         {
             Debug.LogError("String list is empty or not assigned.");
         }
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(3f);
         tipUI.SetActive(false);
     }
 }
