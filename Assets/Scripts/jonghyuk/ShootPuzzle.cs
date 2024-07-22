@@ -9,12 +9,16 @@ public class ShootPuzzle : MonoBehaviour
     public static bool openDoor = false;
     Vector3 dir;
 
+    MeshRenderer thisColor;
+
     public static int isOpen = 0;
     bool usePuzzle = false;
 
     private void Start()
     {
+        openDoor = false;
         isOpen = 0;
+        thisColor = this.GetComponent<MeshRenderer>();
     }
 
     // Update is called once per frame
@@ -38,6 +42,7 @@ public class ShootPuzzle : MonoBehaviour
         if (collision.gameObject.CompareTag("Shoot") && !usePuzzle)
         {
             isOpen++;
+            thisColor.material.color = Color.red;
             usePuzzle = true;
         }
     }

@@ -7,18 +7,17 @@ public class AudioOpenDoor : MonoBehaviour
     public AudioClip openDoor;
     AudioSource audioSource;
 
-    bool isStartTrue = true;
+    bool isStartTrue = false;
     // Start is called before the first frame update
     void Start()
     {
-        isStartTrue = true;
         audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (ShootPuzzle.openDoor && isStartTrue)
+        if (ShootPuzzle.openDoor && !isStartTrue)
         {
             StartSound();
         }
@@ -28,6 +27,6 @@ public class AudioOpenDoor : MonoBehaviour
     {
         audioSource.clip = openDoor;
         audioSource.Play();
-        isStartTrue = false;
+        isStartTrue = true;
     }
 }
